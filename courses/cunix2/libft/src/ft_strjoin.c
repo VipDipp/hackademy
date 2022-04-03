@@ -3,6 +3,7 @@
 char *ft_strjoin(const char *s1, const char *s2)
 {
     char *str = (char *)malloc(sizeof(char));
+    if (str == NULL) return NULL;
     int i = 0;
     while (*s1 != '\0')
     {
@@ -20,7 +21,8 @@ char *ft_strjoin(const char *s1, const char *s2)
     }
     *str = '\0';
     str -= i;
-    char *data = (char *)malloc(sizeof(char) * (i+1));
+    char *data = (char *)malloc(sizeof(char) * (i + 1));
+    if (data == NULL) return NULL;
     while (*str != '\0')
     {
         *data = *str;
