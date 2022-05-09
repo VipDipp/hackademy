@@ -1,4 +1,4 @@
-module client.go
+module client
 
 go 1.18
 
