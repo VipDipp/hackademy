@@ -12,7 +12,7 @@ import (
 
 var c = cache.New(time.Hour, time.Hour)
 
-type resp struct {
+type Resp struct {
 	num  *big.Int
 	time time.Duration
 }
@@ -26,22 +26,20 @@ func main() {
 	for {
 		con, err := dstream.Accept()
 		ErrorHandler(err)
-		println("here")
-		go handle(con)
+		handle(con)
 	}
 }
 
-func fibo(num int) resp {
+func fibo(num int) Resp {
 	start := time.Now()
 	output, found := c.Get(string(num))
 	if found {
-		return resp{
+		return Resp{
 			num:  output.(*big.Int),
 			time: time.Since(start),
 		}
 	}
 
-	println("here2")
 	buf := string(num)
 	a := big.NewInt(0)
 	b := big.NewInt(1)
@@ -50,12 +48,14 @@ func fibo(num int) resp {
 		a, b = b, a
 		num--
 	}
+
 	c.Set(buf, a, cache.NoExpiration)
-	var out = resp{
+	var out = Resp{
 		num:  a,
 		time: time.Since(start),
 	}
-	println(out.num, out.time)
+
+	fmt.Println(out.num, out.time)
 	return out
 }
 
@@ -69,15 +69,15 @@ func ErrorHandler(err error) {
 func handle(con net.Conn) {
 	for {
 		var num int
-		println("here1")
 		decoder := json.NewDecoder(con)
 		decod := decoder.Decode(&num)
 		ErrorHandler(decod)
+		fmt.Println(num)
 
-		resp := fibo(num)
-
+		response := fibo(num)
 		encoder := json.NewEncoder(con)
-		encod := encoder.Encode(resp)
+		encod := encoder.Encode(response.num)
+		encod = encoder.Encode(response.time)
 		ErrorHandler(encod)
 	}
 }

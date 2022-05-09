@@ -8,10 +8,11 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
-type resp struct {
+type Resp struct {
 	num  *big.Int
 	time time.Duration
 }
@@ -21,21 +22,25 @@ func main() {
 	errorHandler(err)
 	defer con.Close()
 
-	scan := bufio.NewScanner(os.Stdin)
-	for scan.Scan() {
-		input, err := strconv.ParseInt(scan.Text(), 10, 64)
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		str, err := reader.ReadString('\n')
+		input, err := strconv.Atoi(strings.TrimSuffix(str, "\r\n"))
 		errorHandler(err)
 
 		encoder := json.NewEncoder(con)
 		encod := encoder.Encode(input)
 		errorHandler(encod)
 
-		var msg resp
+		var num *big.Int
+		var time time.Duration
+
 		decoder := json.NewDecoder(con)
-		decod := decoder.Decode(&msg)
+		decod := decoder.Decode(&num)
+		decod = decoder.Decode(&time)
 		errorHandler(decod)
 
-		fmt.Printf("%s %d\n", msg.time, msg.num)
+		fmt.Println(time, num)
 	}
 }
 
