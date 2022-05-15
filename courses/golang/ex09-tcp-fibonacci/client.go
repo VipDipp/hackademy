@@ -18,14 +18,14 @@ type Resp struct {
 }
 
 func main() {
-	con, err := net.Dial("tcp", "127.0.0.1:8080")
+	con, err := net.Dial("tcp", "127.0.0.1:8085")
 	errorHandler(err)
 	defer con.Close()
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		str, err := reader.ReadString('\n')
-		input, err := strconv.Atoi(strings.TrimSuffix(str, "\r\n"))
+		input, err := strconv.Atoi(strings.TrimSuffix(str, "\n"))
 		errorHandler(err)
 
 		encoder := json.NewEncoder(con)
