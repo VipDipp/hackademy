@@ -28,7 +28,7 @@ func (orderbook *Orderbook) onSideBid(order *Order) ([]*Trade, *Order) {
 		var currentAsk *Order
 
 		//check if there is any ask
-		if len(orderbook.Ask) <= 0 {
+		if len(orderbook.Ask) <= 0 && order.Kind == KindLimit {
 			orderbook.Bid = append(orderbook.Bid, order)
 			return trades, nil
 		}
@@ -41,6 +41,7 @@ func (orderbook *Orderbook) onSideBid(order *Order) ([]*Trade, *Order) {
 				count = i + 1
 			}
 		}
+
 		if count == 0 && order.Kind == KindMarket {
 			return trades, order
 		}
@@ -84,7 +85,7 @@ func (orderbook *Orderbook) onSideAsk(order *Order) ([]*Trade, *Order) {
 		var currentBid *Order
 
 		//check if there is any bid
-		if len(orderbook.Bid) <= 0 {
+		if len(orderbook.Bid) <= 0 && order.Kind == KindLimit {
 			orderbook.Ask = append(orderbook.Ask, order)
 			return trades, nil
 		}
